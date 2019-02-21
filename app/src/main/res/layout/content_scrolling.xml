@@ -9,10 +9,6 @@
         android:layout_height="match_parent"
         tools:context=".ScrollingActivity">
 
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:text="@string/large_text"/>
+    <include layout="@layout/result_layout"/>
 
 </androidx.core.widget.NestedScrollView>
