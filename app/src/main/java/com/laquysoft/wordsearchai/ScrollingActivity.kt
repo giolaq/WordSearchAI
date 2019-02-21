@@ -176,7 +176,7 @@ class ScrollingActivity : AppCompatActivity() {
             previewPane?.setImageBitmap(resizedBitmap)
             bitmapForDetection = resizedBitmap
             bitmapForDetection?.let {
-                //imageProcessor?.process(it, previewOverlay, dictionary, list)
+                viewModel.detectDocumentTextIn(it)
             }
         } catch (e: IOException) {
             Log.e(TAG, "Error retrieving saved image")

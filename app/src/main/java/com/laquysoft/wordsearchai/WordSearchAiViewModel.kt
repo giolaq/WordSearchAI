@@ -17,7 +17,7 @@ class WordSearchAiViewModel(application: Application) : AndroidViewModel(applica
 
     val resultList: MutableLiveData<List<String>> = MutableLiveData()
 
-    private fun detectDocumentTextIn(bitmap: Bitmap) {
+    fun detectDocumentTextIn(bitmap: Bitmap) {
 
         val detector = FirebaseVision.getInstance()
             .cloudDocumentTextRecognizer
