@@ -19,11 +19,12 @@ import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_scrolling.*
 import kotlinx.android.synthetic.main.result_layout.*
 import java.io.IOException
-import java.util.ArrayList
+import java.util.*
 
 class ScrollingActivity : AppCompatActivity() {
 
@@ -89,6 +90,13 @@ class ScrollingActivity : AppCompatActivity() {
             }
         }
 
+
+
+
+        val adapter = WordListAdapter()
+        wordsList.adapter = adapter
+        subscribeUi(adapter)
+
         viewModel = ViewModelProviders.of(this).get(WordSearchAiViewModel::class.java)
 
     }
@@ -110,6 +118,11 @@ class ScrollingActivity : AppCompatActivity() {
         }
     }
 
+    private fun subscribeUi(adapter: WordListAdapter) {
+        viewModel.resultList.observe(this, Observer { words ->
+            if (words != null) adapter.submitList(words)
+        })
+    }
     private fun startCameraIntentForResult() {
         // Clean up last time's image
         imageUri = null
