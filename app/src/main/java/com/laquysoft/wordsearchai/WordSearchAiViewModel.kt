@@ -13,9 +13,11 @@ class WordSearchAiViewModel(application: Application) : AndroidViewModel(applica
 
     private val cloudDocumentTextRecognitionProcessor = CloudDocumentTextRecognitionProcessor()
 
-    var processedBitmap : MutableLiveData<Bitmap> = MutableLiveData()
+    var processedBitmap: MutableLiveData<Bitmap> = MutableLiveData()
 
     val resultList: MutableLiveData<List<String>> = MutableLiveData()
+
+    private lateinit var dictionary: List<String>
 
     fun detectDocumentTextIn(bitmap: Bitmap) {
 
@@ -24,22 +26,39 @@ class WordSearchAiViewModel(application: Application) : AndroidViewModel(applica
 
         val firebaseImage = FirebaseVisionImage.fromBitmap(bitmap)
 
+        loadDictionary()
+
         detector.processImage(firebaseImage)
             .addOnSuccessListener {
-                val result = mutableListOf<String>()
-                if (it.blocks.size == 0) {
-                    Toast.makeText(getApplication(), "No Text detected", Toast.LENGTH_LONG).show()
+                if (it != null) {
+                    val result = mutableListOf<CharArray>()
+                    if (it.blocks.size == 0) {
+                        Toast.makeText(getApplication(), "No Text detected", Toast.LENGTH_LONG).show()
+                    }
+                    it.blocks.forEach { block ->
+                        result.add(block.text.toCharArray())
+                        Log.d("Found ", block.text)
+                    }
+                    val wordsFound = cloudDocumentTextRecognitionProcessor.findWords(result, dictionary)
+                    resultList.postValue(wordsFound)
                 }
-                it.blocks.forEach { block ->
-                    result.add(block.text)
-                    Log.d("Found ", block.text)
-                }
-                val wordsFound = cloudDocumentTextRecognitionProcessor.findWords(result)
-                resultList.postValue(wordsFound)
             }
             .addOnFailureListener {
                 Toast.makeText(getApplication(), "Error detecting Text $it", Toast.LENGTH_LONG).show()
             }
+
+    }
+
+    private fun loadDictionary() {
+        val resources = getApplication<Application>().resources
+        val dictionaryFileId = resources.getIdentifier(
+            "dictionary",
+            "raw", getApplication<Application>().packageName
+        )
+
+        val ins = resources.openRawResource(dictionaryFileId)
+
+        dictionary = ins.readBytes().toString(Charsets.UTF_8).lines()
 
     }
 }

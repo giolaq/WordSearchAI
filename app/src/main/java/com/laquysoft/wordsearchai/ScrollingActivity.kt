@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_scrolling.*
 import kotlinx.android.synthetic.main.result_layout.*
 import java.io.IOException
@@ -90,15 +91,12 @@ class ScrollingActivity : AppCompatActivity() {
             }
         }
 
-
-
+        viewModel = ViewModelProviders.of(this).get(WordSearchAiViewModel::class.java)
 
         val adapter = WordListAdapter()
         wordsList.adapter = adapter
+        wordsList.layoutManager = LinearLayoutManager(this)
         subscribeUi(adapter)
-
-        viewModel = ViewModelProviders.of(this).get(WordSearchAiViewModel::class.java)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
