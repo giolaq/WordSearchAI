@@ -31,15 +31,12 @@ class WordSearchAiViewModel(application: Application) : AndroidViewModel(applica
         detector.processImage(firebaseImage)
             .addOnSuccessListener {
                 if (it != null) {
-                    val result = mutableListOf<CharArray>()
+                    val result = mutableListOf<String>()
                     if (it.blocks.size == 0) {
                         Toast.makeText(getApplication(), "No Text detected", Toast.LENGTH_LONG).show()
                     }
-                    it.blocks.forEach { block ->
-                        result.add(block.text.toCharArray())
-                        Log.d("Found ", block.text)
-                    }
-                    val wordsFound = cloudDocumentTextRecognitionProcessor.findWords(result, dictionary)
+                    val board = it.text.toLowerCase().lines().dropLast(1)
+                    val wordsFound = cloudDocumentTextRecognitionProcessor.findWords(board, dictionary)
                     resultList.postValue(wordsFound)
                 }
             }
