@@ -6,12 +6,11 @@
 
     <ImageView
             android:id="@+id/previewPane"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="200dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/wordsList"
-            android:scaleType="fitStart"/>
+            app:layout_constraintBottom_toTopOf="@id/wordsList"/>
 
 
     <com.laquysoft.wordsearchai.GraphicOverlay

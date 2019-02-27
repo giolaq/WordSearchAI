@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.vision.CameraSource
 import kotlinx.android.synthetic.main.activity_scrolling.*
 import kotlinx.android.synthetic.main.result_layout.*
 import java.io.IOException
@@ -120,7 +121,19 @@ class ScrollingActivity : AppCompatActivity() {
         viewModel.resultList.observe(this, Observer { words ->
             if (words != null) adapter.submitList(words)
         })
+
+        viewModel.resultBoundingBoxes.observe(this, Observer { boundingBoxes ->
+            boundingBoxes.forEach {
+                val cloudDocumentTextGraphic = CloudDocumentTextGraphic(
+                    previewOverlay,
+                    it
+                )
+                previewOverlay.add(cloudDocumentTextGraphic)
+                previewOverlay.postInvalidate()
+            }
+        })
     }
+
     private fun startCameraIntentForResult() {
         // Clean up last time's image
         imageUri = null
@@ -185,6 +198,7 @@ class ScrollingActivity : AppCompatActivity() {
             )
 
             previewPane?.setImageBitmap(resizedBitmap)
+
             bitmapForDetection = resizedBitmap
             bitmapForDetection?.let {
                 viewModel.detectDocumentTextIn(it)
