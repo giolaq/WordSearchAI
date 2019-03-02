@@ -19,8 +19,7 @@
             android:layout_height="200dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/wordsList"
-            app:layout_constraintVertical_chainStyle="packed"/>
+            app:layout_constraintBottom_toTopOf="@id/wordsList"/>
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/wordsList"

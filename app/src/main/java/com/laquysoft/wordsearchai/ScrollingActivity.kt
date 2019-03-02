@@ -199,6 +199,8 @@ class ScrollingActivity : AppCompatActivity() {
 
             previewPane?.setImageBitmap(resizedBitmap)
 
+            previewOverlay.setCameraInfo(resizedBitmap.width, resizedBitmap.height,CameraSource.CAMERA_FACING_BACK)
+
             bitmapForDetection = resizedBitmap
             bitmapForDetection?.let {
                 viewModel.detectDocumentTextIn(it)

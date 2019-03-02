@@ -3,6 +3,7 @@ package com.laquysoft.wordsearchai
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
 import com.google.firebase.ml.vision.document.FirebaseVisionDocumentText
 
 /**
@@ -30,8 +31,15 @@ class CloudDocumentTextGraphic(
         symbol?.let { syb ->
             val rect = syb.boundingBox
             rect?.let {
-                canvas.drawRect(it, rectPaint)
-                canvas.drawText(syb.text, it.left.toFloat(), it.bottom.toFloat(), textPaint)
+                val scaledLeft = scaleX(it.left.toFloat()).toInt()
+                val scaledTop = scaleY(it.top.toFloat()).toInt()
+                val scaledRight = scaleX(it.right.toFloat()).toInt()
+                val scaledBottom = scaleY(it.bottom.toFloat()).toInt()
+                val scaledRect = Rect(scaledLeft, scaledTop, scaledRight, scaledBottom)
+                canvas.drawRect(scaledRect, rectPaint)
+                val x = scaleX(it.left.toFloat())
+                val y = scaleY(it.bottom.toFloat())
+                canvas.drawText(syb.text, x, y, textPaint)
             }
         } ?: kotlin.run { throw IllegalStateException("Attempting to draw a null text.") }
     }
