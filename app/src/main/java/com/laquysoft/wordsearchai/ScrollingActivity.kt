@@ -6,15 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.util.Pair
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -23,6 +20,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.vision.CameraSource
+import com.laquysoft.wordsearchai.ImageLoader.Companion.SIZE_1024_768
 import kotlinx.android.synthetic.main.activity_scrolling.*
 import kotlinx.android.synthetic.main.result_layout.*
 import java.io.IOException
@@ -37,7 +35,6 @@ class ScrollingActivity : AppCompatActivity() {
     private var imageMaxWidth = 0
     // Max height (portrait mode)
     private var imageMaxHeight = 0
-    private var bitmapForDetection: Bitmap? = null
     private var selectedSize: String = SIZE_1024_768
 
     private var isLandScape: Boolean = false
@@ -169,103 +166,25 @@ class ScrollingActivity : AppCompatActivity() {
 
     private fun tryReloadAndDetectInImage() {
         try {
-            if (imageUri == null) {
-                return
+            imageUri?.let {
+                // Clear the overlay first
+                previewOverlay?.clear()
+
+                val imageLoader = ImageLoader(contentResolver, it, selectedSize, isLandScape, previewPane)
+
+                val resizedBitmap = imageLoader.resizedBitmap
+                previewPane?.setImageBitmap(resizedBitmap)
+
+                previewOverlay.setCameraInfo(resizedBitmap.width, resizedBitmap.height,CameraSource.CAMERA_FACING_BACK)
+
+                resizedBitmap.let { bitmap ->
+                    viewModel.detectDocumentTextIn(bitmap)
+                }
             }
 
-            // Clear the overlay first
-            previewOverlay?.clear()
-
-            val imageBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-
-            // Get the dimensions of the View
-            val targetedSize = getTargetedWidthHeight()
-
-            val targetWidth = targetedSize.first
-            val maxHeight = targetedSize.second
-
-            // Determine how much to scale down the image
-            val scaleFactor = Math.max(
-                imageBitmap.width.toFloat() / targetWidth.toFloat(),
-                imageBitmap.height.toFloat() / maxHeight.toFloat()
-            )
-
-            val resizedBitmap = Bitmap.createScaledBitmap(
-                imageBitmap,
-                (imageBitmap.width / scaleFactor).toInt(),
-                (imageBitmap.height / scaleFactor).toInt(),
-                true
-            )
-
-            previewPane?.setImageBitmap(resizedBitmap)
-
-            previewOverlay.setCameraInfo(resizedBitmap.width, resizedBitmap.height,CameraSource.CAMERA_FACING_BACK)
-
-            bitmapForDetection = resizedBitmap
-            bitmapForDetection?.let {
-                viewModel.detectDocumentTextIn(it)
-            }
         } catch (e: IOException) {
             Log.e(TAG, "Error retrieving saved image")
         }
-    }
-
-    // Gets the targeted width / height.
-    private fun getTargetedWidthHeight(): Pair<Int, Int> {
-        var targetWidth = 0
-        var targetHeight = 0
-
-        when (selectedSize) {
-            SIZE_PREVIEW -> {
-                val maxWidthForPortraitMode = getImageMaxWidth()
-                val maxHeightForPortraitMode = getImageMaxHeight()
-                targetWidth = if (isLandScape) maxHeightForPortraitMode else maxWidthForPortraitMode
-                targetHeight = if (isLandScape) maxWidthForPortraitMode else maxHeightForPortraitMode
-            }
-            SIZE_640_480 -> {
-                targetWidth = if (isLandScape) 640 else 480
-                targetHeight = if (isLandScape) 480 else 640
-            }
-            SIZE_1024_768 -> {
-                targetWidth = if (isLandScape) 1024 else 768
-                targetHeight = if (isLandScape) 768 else 1024
-            }
-            else -> throw IllegalStateException("Unknown size")
-        }
-
-        return Pair(targetWidth, targetHeight)
-    }
-
-    // Returns max image width, always for portrait mode. Caller needs to swap width / height for
-    // landscape mode.
-    private fun getImageMaxWidth(): Int {
-        if (imageMaxWidth == 0) {
-            // Calculate the max width in portrait mode. This is done lazily since we need to wait for
-            // a UI layout pass to get the right values. So delay it to first time image rendering time.
-            imageMaxWidth = if (isLandScape) {
-                (previewPane.parent as View).height
-            } else {
-                (previewPane.parent as View).width
-            }
-        }
-
-        return imageMaxWidth
-    }
-
-    // Returns max image height, always for portrait mode. Caller needs to swap width / height for
-    // landscape mode.
-    private fun getImageMaxHeight(): Int {
-        if (imageMaxHeight == 0) {
-            // Calculate the max width in portrait mode. This is done lazily since we need to wait for
-            // a UI layout pass to get the right values. So delay it to first time image rendering time.
-            imageMaxHeight = if (isLandScape) {
-                (previewPane.parent as View).width
-            } else {
-                (previewPane.parent as View).height
-            }
-        }
-
-        return imageMaxHeight
     }
 
     private fun allPermissionsGranted(): Boolean {
@@ -323,10 +242,6 @@ class ScrollingActivity : AppCompatActivity() {
     companion object {
 
         private const val TAG = "ScrollingActivity"
-
-        private const val SIZE_PREVIEW = "w:max" // Available on-screen width.
-        private const val SIZE_1024_768 = "w:1024" // ~1024*768 in a normal ratio
-        private const val SIZE_640_480 = "w:640" // ~640*480 in a normal ratio
 
         private const val KEY_IMAGE_URI = " com.laquysoft.wordsearchai.KEY_IMAGE_URI"
         private const val KEY_IMAGE_MAX_WIDTH = "com.laquysoft.wordsearchai.KEY_IMAGE_MAX_WIDTH"

@@ -31,7 +31,6 @@ class WordSearchAiViewModel(application: Application) : AndroidViewModel(applica
             .addOnSuccessListener {
                 if (it != null) {
                     postWordsFounded(it)
-
                     postBoundingBoxes(it)
                 }
             }
