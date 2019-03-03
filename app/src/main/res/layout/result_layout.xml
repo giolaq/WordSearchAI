@@ -6,26 +6,28 @@
 
     <ImageView
             android:id="@+id/previewPane"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="200dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:scaleType="fitStart"/>
+            app:layout_constraintBottom_toTopOf="@id/wordsList"/>
 
 
     <com.laquysoft.wordsearchai.GraphicOverlay
             android:id="@+id/previewOverlay"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="200dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toTopOf="@id/wordsList"/>
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/wordsList"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/previewOverlay"/>
+            app:layout_constraintTop_toBottomOf="@id/previewOverlay"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
