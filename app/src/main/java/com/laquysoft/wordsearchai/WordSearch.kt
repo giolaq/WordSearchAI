@@ -5,7 +5,7 @@ import java.util.ArrayList
 import java.util.HashSet
 
 class WordSearch {
-    internal var result: MutableSet<String> = HashSet()
+    private var result: MutableSet<String> = HashSet()
 
     fun findWords(board: Array<CharArray>, words: List<String>): List<String> {
         //HashSet<String> result = new HashSet<String>();
@@ -16,12 +16,11 @@ class WordSearch {
         }
 
         val m = board.size
-        val n = board[0].size
 
-        val visited = Array(m) { BooleanArray(n) }
+        val visited = board.map { chars -> BooleanArray(chars.size) }.toTypedArray()
 
         for (i in 0 until m) {
-            for (j in 0 until n) {
+            for (j in 0 until board[i].size) {
                 dfs(board, visited, "", i, j, trie)
             }
         }
@@ -30,13 +29,15 @@ class WordSearch {
     }
 
     private fun dfs(board: Array<CharArray>, visited: Array<BooleanArray>, str: String, i: Int, j: Int, trie: Trie) {
+        if (i < 0 || j < 0) return
+
         var str = str
         val m = board.size
-        val n = board[0].size
 
-        if (i < 0 || j < 0 || i >= m || j >= n) {
-            return
-        }
+        if( i>=m ) return
+        val n = board[i].size
+
+        if (j >= n) return
 
         if (visited[i][j])
             return
