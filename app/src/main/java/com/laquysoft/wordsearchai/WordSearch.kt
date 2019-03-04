@@ -10,20 +10,15 @@ class WordSearch {
     fun findWords(board: Array<CharArray>, words: List<String>): List<String> {
 
         val trie = Trie()
-        for (word in words) {
-            trie.insert(word)
-        }
-
-        val m = board.size
+        words.forEach { trie.insert(it) }
 
         val visited = board.map { chars -> BooleanArray(chars.size) }.toTypedArray()
 
-        for (i in 0 until m) {
-            for (j in 0 until board[i].size) {
-                dfs(board, visited, "", i, j, trie)
+        board.forEachIndexed { rowIndex, row ->
+            row.indices.forEach { charIndex ->
+                dfs(board, visited, "", rowIndex, charIndex, trie)
             }
         }
-
         return ArrayList(result)
     }
 
@@ -33,7 +28,7 @@ class WordSearch {
         var str = str
         val m = board.size
 
-        if( i>=m ) return
+        if (i >= m) return
         val n = board[i].size
 
         if (j >= n) return
