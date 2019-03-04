@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
@@ -78,23 +79,31 @@ class MainActivity : AppCompatActivity() {
 
         isLandScape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+        viewModel = ViewModelProviders.of(this).get(WordSearchAiViewModel::class.java)
+
         savedInstanceState?.let {
             imageUri = it.getParcelable(KEY_IMAGE_URI)
             imageMaxWidth = it.getInt(KEY_IMAGE_MAX_WIDTH)
             imageMaxHeight = it.getInt(KEY_IMAGE_MAX_HEIGHT)
-            selectedSize = it.getString(KEY_SELECTED_SIZE)
+            selectedSize = it.getString(KEY_SELECTED_SIZE, SIZE_1024_768)
 
-            imageUri?.let { _ ->
+            imageUri?.let {
                 tryReloadAndDetectInImage()
             }
         }
-
-        viewModel = ViewModelProviders.of(this).get(WordSearchAiViewModel::class.java)
 
         val adapter = WordListAdapter()
         wordsList.adapter = adapter
         wordsList.layoutManager = LinearLayoutManager(this)
         subscribeUi(adapter)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(KEY_IMAGE_URI, imageUri)
+        outState.putInt(KEY_IMAGE_MAX_WIDTH, imageMaxWidth)
+        outState.putInt(KEY_IMAGE_MAX_HEIGHT, imageMaxHeight)
+        outState.putString(KEY_SELECTED_SIZE, selectedSize)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
