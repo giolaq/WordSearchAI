@@ -8,7 +8,6 @@ class WordSearch {
     private var result: MutableSet<String> = HashSet()
 
     fun findWords(board: Array<CharArray>, words: List<String>): List<String> {
-        //HashSet<String> result = new HashSet<String>();
 
         val trie = Trie()
         for (word in words) {

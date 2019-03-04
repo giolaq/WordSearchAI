@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.main.result_layout.*
 import java.io.IOException
 import java.util.*
 
-class ScrollingActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: WordSearchAiViewModel
 
@@ -241,7 +241,7 @@ class ScrollingActivity : AppCompatActivity() {
 
     companion object {
 
-        private const val TAG = "ScrollingActivity"
+        private const val TAG = "MainActivity"
 
         private const val KEY_IMAGE_URI = " com.laquysoft.wordsearchai.KEY_IMAGE_URI"
         private const val KEY_IMAGE_MAX_WIDTH = "com.laquysoft.wordsearchai.KEY_IMAGE_MAX_WIDTH"
