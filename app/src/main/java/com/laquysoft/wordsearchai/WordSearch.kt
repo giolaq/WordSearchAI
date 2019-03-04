@@ -5,38 +5,33 @@ import java.util.ArrayList
 import java.util.HashSet
 
 class WordSearch {
-    internal var result: MutableSet<String> = HashSet()
+    private var result: MutableSet<String> = HashSet()
 
     fun findWords(board: Array<CharArray>, words: List<String>): List<String> {
-        //HashSet<String> result = new HashSet<String>();
 
         val trie = Trie()
-        for (word in words) {
-            trie.insert(word)
-        }
+        words.forEach { trie.insert(it) }
 
-        val m = board.size
-        val n = board[0].size
+        val visited = board.map { chars -> BooleanArray(chars.size) }.toTypedArray()
 
-        val visited = Array(m) { BooleanArray(n) }
-
-        for (i in 0 until m) {
-            for (j in 0 until n) {
-                dfs(board, visited, "", i, j, trie)
+        board.forEachIndexed { rowIndex, row ->
+            row.indices.forEach { charIndex ->
+                dfs(board, visited, "", rowIndex, charIndex, trie)
             }
         }
-
         return ArrayList(result)
     }
 
     private fun dfs(board: Array<CharArray>, visited: Array<BooleanArray>, str: String, i: Int, j: Int, trie: Trie) {
+        if (i < 0 || j < 0) return
+
         var str = str
         val m = board.size
-        val n = board[0].size
 
-        if (i < 0 || j < 0 || i >= m || j >= n) {
-            return
-        }
+        if (i >= m) return
+        val n = board[i].size
+
+        if (j >= n) return
 
         if (visited[i][j])
             return

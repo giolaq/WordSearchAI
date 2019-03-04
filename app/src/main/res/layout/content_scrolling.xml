@@ -7,7 +7,7 @@
         tools:showIn="@layout/activity_scrolling"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ScrollingActivity">
+        tools:context=".MainActivity">
 
     <include layout="@layout/result_layout"/>
 
