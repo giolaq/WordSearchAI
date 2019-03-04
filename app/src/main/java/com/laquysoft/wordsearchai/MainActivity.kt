@@ -129,6 +129,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         viewModel.resultBoundingBoxes.observe(this, Observer { boundingBoxes ->
+            previewOverlay.clear()
             boundingBoxes.forEach {
                 val cloudDocumentTextGraphic = CloudDocumentTextGraphic(
                     previewOverlay,
