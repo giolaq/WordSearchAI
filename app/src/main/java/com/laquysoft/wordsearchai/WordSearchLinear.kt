@@ -46,7 +46,7 @@ class WordSearchLinear {
     ) {
         if (i < 0 || j < 0) return
 
-        var str = str
+        var newStr = str
         val m = board.size
 
         if (i >= m) return
@@ -57,18 +57,18 @@ class WordSearchLinear {
         if (visited[i][j])
             return
 
-        str += board[i][j]
+        newStr += board[i][j]
 
-        if (!trie.startsWith(str))
+        if (!trie.startsWith(newStr))
             return
 
-        if (trie.search(str)) {
-            result.add(str)
-            Log.d("WORDSEARCH", "Result $str $i $j")
+        if (trie.search(newStr)) {
+            result.add(newStr)
+            Log.d("WORDSEARCH", "Result $newStr $i $j")
         }
 
         visited[i][j] = true
-        dfs(board, visited, str, i + direction.first, j + direction.second, trie, direction)
+        dfs(board, visited, newStr, i + direction.first, j + direction.second, trie, direction)
         visited[i][j] = false
     }
 
