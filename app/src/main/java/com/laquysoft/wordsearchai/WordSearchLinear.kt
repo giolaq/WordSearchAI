@@ -32,7 +32,7 @@ class WordSearchLinear {
                 }
             }
         }
-
+        
         return ArrayList(result)
     }
 
