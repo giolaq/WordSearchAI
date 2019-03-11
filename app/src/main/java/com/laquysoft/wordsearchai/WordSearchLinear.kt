@@ -25,13 +25,14 @@ class WordSearchLinear {
 
         val visited = board.map { chars -> BooleanArray(chars.size) }.toTypedArray()
 
-        board.forEachIndexed { rowIndex, row ->
-            row.indices.forEach { charIndex ->
+        for ( i in 0..board.size) {
+            for (j in 0..board[i].size) {
                 directions.forEach {
-                    dfs(board, visited, "", rowIndex, charIndex, trie, it)
+                    dfs(board, visited, "", i, j, trie, it)
                 }
             }
         }
+
         return ArrayList(result)
     }
 
