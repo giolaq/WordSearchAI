@@ -11,13 +11,13 @@ class Trie {
 
     fun insert(word: String) {
         var node = root
-        for (c in word.toCharArray()) {
-            val index = c - 'a'
+        word.forEach {
+            val index = it - 'a'
             if (index in 0..25) {
                 if (node.children[index] == null) {
                     node.children[index] = TrieNode()
                 }
-                node = node.children[c - 'a']!!
+                node = node.children[it - 'a']!!
             }
         }
         node.item = word
@@ -25,8 +25,8 @@ class Trie {
 
     fun search(word: String): Boolean {
         var node = root
-        for (c in word.toCharArray()) {
-            val index = c - 'a'
+        word.forEach {
+            val index = it - 'a'
             if (index in 0..25) {
                 if (node.children[index] == null)
                     return false
@@ -39,8 +39,8 @@ class Trie {
 
     fun startsWith(prefix: String): Boolean {
         var node = root
-        for (c in prefix.toCharArray()) {
-            val index = c - 'a'
+        prefix.forEach {
+            val index = it - 'a'
             if (index in 0..25) {
                 if (node.children[index] == null)
                     return false
