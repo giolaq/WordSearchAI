@@ -15,11 +15,12 @@ class WordSearchLinear {
         val trie = Trie()
         words.forEach { trie.insert(it) }
 
-        val visited = board.map { chars -> BooleanArray(chars.size) }.toTypedArray()
 
         for ( i in 0 until board.size) {
             for (j in 0 until board[i].size) {
                 for(d in 0 until directionX.size) {
+                    val visited = board.map { chars -> BooleanArray(chars.size) }.toTypedArray()
+
                     dfs(board, visited, "", i, j, trie, Pair(directionX[d], directionY[d]))
                 }
             }
@@ -57,7 +58,7 @@ class WordSearchLinear {
 
         if (trie.search(newStr)) {
             result.add(newStr)
-            Log.d("WORDSEARCH", "Result $newStr $i $j")
+            Log.d("WORDSEARCH", "Found $newStr $i $j")
         }
 
         visited[i][j] = true
