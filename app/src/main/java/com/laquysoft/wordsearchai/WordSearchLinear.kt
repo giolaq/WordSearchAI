@@ -7,16 +7,8 @@ import java.util.HashSet
 class WordSearchLinear {
     private var result: MutableSet<String> = HashSet()
 
-    private val directions = listOf(
-        Pair(0, 1),
-        Pair(0, -1),
-        Pair(1, 0),
-        Pair(-1, 0),
-        Pair(1, 1),
-        Pair(-1, -1),
-        Pair(1, -1),
-        Pair(-1, 1)
-    )
+    private val directionX = intArrayOf(0, 0, 1, -1, 1, -1, 1, -1)
+    private val directionY = intArrayOf(1, -1, 0, 0, 1, -1, -1, 1)
 
     fun findWords(board: Array<CharArray>, words: List<String>): List<String> {
 
@@ -25,13 +17,14 @@ class WordSearchLinear {
 
         val visited = board.map { chars -> BooleanArray(chars.size) }.toTypedArray()
 
-        board.forEachIndexed { rowIndex, row ->
-            row.indices.forEach { charIndex ->
-                directions.forEach {
-                    dfs(board, visited, "", rowIndex, charIndex, trie, it)
+        for ( i in 0 until board.size) {
+            for (j in 0 until board[i].size) {
+                for(d in 0 until directionX.size) {
+                    dfs(board, visited, "", i, j, trie, Pair(directionX[d], directionY[d]))
                 }
             }
         }
+
         return ArrayList(result)
     }
 

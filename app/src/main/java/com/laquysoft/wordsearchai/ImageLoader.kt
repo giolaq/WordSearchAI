@@ -15,7 +15,7 @@ class ImageLoader(
     val previewPane: View
 ) {
 
-    val imageBitmap: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+    private val imageBitmap: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
 
     val resizedBitmap: Bitmap
         get() {
@@ -42,8 +42,8 @@ class ImageLoader(
 
     // Gets the targeted width / height.
     private fun getTargetedWidthHeight(): Pair<Int, Int> {
-        var targetWidth = 0
-        var targetHeight = 0
+        val targetWidth: Int
+        val targetHeight: Int
 
         when (selectedSize) {
             SIZE_PREVIEW -> {
