@@ -1,8 +1,6 @@
 package com.laquysoft.wordsearchai
 
-import android.util.Log
-import java.util.ArrayList
-import java.util.HashSet
+import java.util.*
 
 class WordSearchLinear {
     private var result: MutableSet<String> = HashSet()
@@ -38,27 +36,14 @@ class WordSearchLinear {
         trie: Trie,
         direction: Pair<Int, Int>
     ) {
-        if (i < 0 || j < 0) return
+        if (i < 0 || j < 0 || i >= board.size || j >= board[i].size || visited[i][j]) return
 
-        var newStr = str
-        val m = board.size
+        val newStr = str + board[i][j]
 
-        if (i >= m) return
-        val n = board[i].size
-
-        if (j >= n) return
-
-        if (visited[i][j])
-            return
-
-        newStr += board[i][j]
-
-        if (!trie.startsWith(newStr))
-            return
+        if (!trie.startsWith(newStr)) return
 
         if (trie.search(newStr)) {
             result.add(newStr)
-            Log.d("WORDSEARCH", "Found $newStr $i $j")
         }
 
         visited[i][j] = true
