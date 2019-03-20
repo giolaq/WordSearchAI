@@ -1,4 +1,4 @@
-package com.laquysoft.wordsearchai
+package com.laquysoft.wordsearchai.algo
 
 internal class TrieNode {
     var children = arrayOfNulls<TrieNode>(26)
