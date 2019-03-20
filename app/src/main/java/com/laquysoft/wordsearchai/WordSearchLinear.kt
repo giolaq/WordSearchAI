@@ -8,16 +8,16 @@ class WordSearchLinear {
     private val directionX = intArrayOf(0, 0, 1, -1, 1, -1, 1, -1)
     private val directionY = intArrayOf(1, -1, 0, 0, 1, -1, -1, 1)
 
-    fun findWords(board: Array<CharArray>, words: List<String>): List<String> {
+    fun findWords(board: List<String>, words: List<String>): List<String> {
 
         val trie = Trie()
         words.forEach { trie.insert(it) }
 
 
         for ( i in 0 until board.size) {
-            for (j in 0 until board[i].size) {
+            for (j in 0 until board[i].length) {
                 for(d in 0 until directionX.size) {
-                    val visited = board.map { chars -> BooleanArray(chars.size) }.toTypedArray()
+                    val visited = board.map { chars -> BooleanArray(chars.length) }.toTypedArray()
 
                     dfs(board, visited, "", i, j, trie, Pair(directionX[d], directionY[d]))
                 }
@@ -28,7 +28,7 @@ class WordSearchLinear {
     }
 
     private fun dfs(
-        board: Array<CharArray>,
+        board: List<String>,
         visited: Array<BooleanArray>,
         str: String,
         i: Int,
@@ -36,7 +36,7 @@ class WordSearchLinear {
         trie: Trie,
         direction: Pair<Int, Int>
     ) {
-        if (i < 0 || j < 0 || i >= board.size || j >= board[i].size || visited[i][j]) return
+        if (i < 0 || j < 0 || i >= board.size || j >= board[i].length || visited[i][j]) return
 
         val newStr = str + board[i][j]
 
