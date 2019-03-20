@@ -62,6 +62,7 @@ class WordSearchAiViewModel(application: Application) : AndroidViewModel(applica
         if (firebaseVisionDocumentText.blocks.size == 0) {
             Toast.makeText(getApplication(), "No Text detected", Toast.LENGTH_LONG).show()
         }
+        //
         val board = firebaseVisionDocumentText.text.toLowerCase().lines().dropLast(1)
         val wordsFound = cloudDocumentTextRecognitionProcessor.findWords(board, dictionary)
         resultList.postValue(wordsFound)
