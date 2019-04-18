@@ -28,9 +28,9 @@ class Trie {
         word.forEach {
             val index = it - 'a'
             if (index in 0..25) {
-                if (node.children[index] == null)
-                    return false
-                node = node.children[index]!!
+                node.children[index]?.let { childrenNode ->
+                    node = childrenNode
+                } ?: return false
             }
 
         }
@@ -42,9 +42,9 @@ class Trie {
         prefix.forEach {
             val index = it - 'a'
             if (index in 0..25) {
-                if (node.children[index] == null)
-                    return false
-                node = node.children[index]!!
+                node.children[index]?.let { childrenNode ->
+                    node = childrenNode
+                } ?: return false
             }
         }
         return true
