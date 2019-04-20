@@ -19,9 +19,10 @@ object CloudDocumentTextRecognitionProcessor {
             .toLowerCase()
             .lines()
             .dropLast(1)
-            .map { it.replace("\\s".toRegex(), "") }
+            .map { it.replace("\\s".toRegex(), "").toCharArray() }
+            .toTypedArray()
 
-        return WordSearchLinear().findWords(board, dictionary.filter { it.length > 2 })
+        return WordSearchLinear().findWords(board, dictionary.filter { it.length > 2 }.toTypedArray())
     }
 
 }
