@@ -13,7 +13,7 @@
             app:layout_constraintBottom_toTopOf="@id/wordsList"/>
 
 
-    <com.laquysoft.wordsearchai.GraphicOverlay
+    <com.laquysoft.wordsearchai.overlay.GraphicOverlay
             android:id="@+id/previewOverlay"
             android:layout_width="fill_parent"
             android:layout_height="200dp"

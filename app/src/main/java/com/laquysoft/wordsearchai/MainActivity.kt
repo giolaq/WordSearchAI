@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.vision.CameraSource
 import com.laquysoft.wordsearchai.ImageLoader.Companion.SIZE_1024_768
+import com.laquysoft.wordsearchai.overlay.CloudDocumentTextGraphic
 import kotlinx.android.synthetic.main.activity_scrolling.*
 import kotlinx.android.synthetic.main.result_layout.*
 import java.io.IOException

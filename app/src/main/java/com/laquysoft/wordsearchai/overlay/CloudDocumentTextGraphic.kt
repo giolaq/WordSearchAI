@@ -1,4 +1,4 @@
-package com.laquysoft.wordsearchai
+package com.laquysoft.wordsearchai.overlay
 
 import android.graphics.Canvas
 import android.graphics.Color

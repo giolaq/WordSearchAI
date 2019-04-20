@@ -12,7 +12,7 @@ class ImageLoader(
     uri: Uri,
     private val selectedSize: String,
     private val isLandScape: Boolean,
-    val previewPane: View
+    private val previewPane: View
 ) {
 
     private val imageBitmap: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)

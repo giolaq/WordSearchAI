@@ -11,8 +11,6 @@ import com.google.firebase.ml.vision.document.FirebaseVisionDocumentText
 
 class WordSearchAiViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val cloudDocumentTextRecognitionProcessor = CloudDocumentTextRecognitionProcessor()
-
     val resultList: MutableLiveData<List<String>> = MutableLiveData()
     val resultBoundingBoxes: MutableLiveData<List<FirebaseVisionDocumentText.Symbol>> = MutableLiveData()
 
@@ -62,8 +60,8 @@ class WordSearchAiViewModel(application: Application) : AndroidViewModel(applica
         if (firebaseVisionDocumentText.blocks.size == 0) {
             Toast.makeText(getApplication(), "No Text detected", Toast.LENGTH_LONG).show()
         }
-        val board = firebaseVisionDocumentText.text.toLowerCase().lines().dropLast(1)
-        val wordsFound = cloudDocumentTextRecognitionProcessor.findWords(board, dictionary)
+
+        val wordsFound = CloudDocumentTextRecognitionProcessor.process(firebaseVisionDocumentText.text, dictionary)
         resultList.postValue(wordsFound)
     }
 
