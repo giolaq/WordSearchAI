@@ -22,7 +22,7 @@ object CloudDocumentTextRecognitionProcessor {
             .map { it.replace("\\s".toRegex(), "").toCharArray() }
             .toTypedArray()
 
-        return WordSearchLinear().findWords(board, dictionary.filter { it.length > 2 }.toTypedArray())
+        return WordSearchLinear.findWords(board, dictionary.filter { it.length > 2 }.toTypedArray())
     }
 
 }

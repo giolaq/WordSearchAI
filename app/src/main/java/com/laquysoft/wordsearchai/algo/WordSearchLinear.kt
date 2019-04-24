@@ -2,7 +2,7 @@ package com.laquysoft.wordsearchai.algo
 
 import java.util.*
 
-class WordSearchLinear {
+object WordSearchLinear {
 
     private val directionX = intArrayOf(0, 0, 1, -1, 1, -1, 1, -1)
     private val directionY = intArrayOf(1, -1, 0, 0, 1, -1, -1, 1)
@@ -28,23 +28,27 @@ class WordSearchLinear {
         j: Int,
         p: TrieNode,
         res: MutableList<String>,
-        direction: Pair<Int, Int>
+        directions: Pair<Int, Int>
     ) {
 
         if (i < 0 || j < 0 || i >= board.size || j >= board[i].size || visited[i][j]) return
 
-        var p = p
+        var currentNode = p
         val c = board[i][j]
+
         if (c - 'a' !in 0..25) return
-        if (p.next[c - 'a'] == null) return
-        p = p.next[c - 'a']!!
-        if (p.word != null) {   // found one
-            res.add(p.word!!)
-            p.word = null     // de-duplicate
+
+        currentNode.next[c - 'a']?.let { currentNode = it } ?: return
+
+        if (currentNode.word != null) {
+            res.add(currentNode.word!!)
+            currentNode.word = null
         }
 
         visited[i][j] = true
-        dfs(board, visited, i + direction.first, j + direction.second, p, res, direction)
+        val nextI = i + directions.first
+        val nextJ = j + directions.second
+        dfs(board, visited, nextI, nextJ, currentNode, res, directions)
         visited[i][j] = false
     }
 }
