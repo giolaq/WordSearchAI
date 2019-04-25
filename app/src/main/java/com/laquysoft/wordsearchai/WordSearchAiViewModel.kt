@@ -39,20 +39,12 @@ class WordSearchAiViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private fun postBoundingBoxes(text: FirebaseVisionDocumentText) {
-        val result = mutableListOf<FirebaseVisionDocumentText.Symbol>()
-        val blocks = text.blocks
-        for (i in blocks.indices) {
-            val paragraphs = blocks[i].paragraphs
-            for (j in paragraphs.indices) {
-                val words = paragraphs[j].words
-                for (l in words.indices) {
-                    val symbols = words[l].symbols
-                    for (m in symbols.indices) {
-                        result.add(symbols[m])
-                    }
-                }
-            }
-        }
+
+        val result = text.blocks
+            .flatMap { it.paragraphs }
+            .flatMap { it.words }
+            .flatMap { it.symbols }
+
         resultBoundingBoxes.postValue(result)
     }
 
