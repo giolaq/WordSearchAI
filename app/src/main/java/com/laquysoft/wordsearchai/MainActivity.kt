@@ -129,9 +129,10 @@ class MainActivity : AppCompatActivity() {
 
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         takePictureIntent.resolveActivity(packageManager)?.let {
-            val values = ContentValues()
-            values.put(MediaStore.Images.Media.TITLE, "New Picture")
-            values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera")
+            val values = ContentValues().apply {
+                put(MediaStore.Images.Media.TITLE, "New Picture")
+                put(MediaStore.Images.Media.DESCRIPTION, "From Camera")
+            }
             imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
@@ -139,19 +140,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startChooseImageIntentForResult() {
-        val intent = Intent()
-        intent.type = "image/*"
-        intent.action = Intent.ACTION_GET_CONTENT
+        val intent = Intent().apply {
+            intent.type = "image/*"
+            intent.action = Intent.ACTION_GET_CONTENT
+        }
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_CHOOSE_IMAGE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             tryReloadAndDetectInImage()
         } else if (requestCode == REQUEST_CHOOSE_IMAGE && resultCode == Activity.RESULT_OK) {
             // In this case, imageUri is returned by the chooser, save it.
-            imageUri = data!!.data
-            tryReloadAndDetectInImage()
+            data?.let {
+                imageUri = it.data
+                tryReloadAndDetectInImage()
+            }
         }
     }
 
@@ -166,7 +171,7 @@ class MainActivity : AppCompatActivity() {
                 val resizedBitmap = imageLoader.resizedBitmap
                 previewPane?.setImageBitmap(resizedBitmap)
 
-                previewOverlay.setCameraInfo(resizedBitmap.width, resizedBitmap.height,CameraSource.CAMERA_FACING_BACK)
+                previewOverlay.setCameraInfo(resizedBitmap.width, resizedBitmap.height, CameraSource.CAMERA_FACING_BACK)
 
                 resizedBitmap.let { bitmap ->
                     viewModel.detectDocumentTextIn(bitmap)
@@ -178,18 +183,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun allPermissionsGranted(): Boolean {
-        for (permission in getRequiredPermissions()) {
-            permission?.let {
-                if (!isPermissionGranted(this, it)) {
-                    return false
-                }
-            }
-        }
-        return true
-    }
+    private fun allPermissionsGranted() =
+        getRequiredPermissions().all { isPermissionGranted(this, it) }
 
-    private fun getRequiredPermissions(): Array<String?> {
+
+    private fun getRequiredPermissions(): Array<String> {
         return try {
             val info = this.packageManager
                 .getPackageInfo(this.packageName, PackageManager.GET_PERMISSIONS)
@@ -197,24 +195,19 @@ class MainActivity : AppCompatActivity() {
             if (ps != null && ps.isNotEmpty()) {
                 ps
             } else {
-                arrayOfNulls(0)
+                emptyArray()
             }
         } catch (e: Exception) {
-            arrayOfNulls(0)
+            emptyArray()
         }
     }
 
     private fun getRuntimePermissions() {
-        val allNeededPermissions = ArrayList<String>()
-        for (permission in getRequiredPermissions()) {
-            permission?.let {
-                if (!isPermissionGranted(this, it)) {
-                    allNeededPermissions.add(permission)
-                }
-            }
+        val allNeededPermissions = getRequiredPermissions().mapNotNull {
+            it.takeIf { !isPermissionGranted(this, it) }
         }
 
-        if (!allNeededPermissions.isEmpty()) {
+        if (allNeededPermissions.isNotEmpty()) {
             ActivityCompat.requestPermissions(
                 this, allNeededPermissions.toTypedArray(), PERMISSION_REQUESTS
             )
