@@ -41,7 +41,7 @@ class CloudDocumentTextGraphic(
                 val y = scaleY(it.bottom.toFloat())
                 canvas.drawText(syb.text, x, y, textPaint)
             }
-        } ?: kotlin.run { throw IllegalStateException("Attempting to draw a null text.") }
+        } ?: throw IllegalStateException("Attempting to draw a null text.")
     }
 
     companion object {
