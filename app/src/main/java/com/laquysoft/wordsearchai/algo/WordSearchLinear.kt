@@ -2,12 +2,12 @@ package com.laquysoft.wordsearchai.algo
 
 import java.util.*
 
-object WordSearchLinear {
+object WordSearchLinear : WordSearch {
 
     private val directionX = intArrayOf(0, 0, 1, -1, 1, -1, 1, -1)
     private val directionY = intArrayOf(1, -1, 0, 0, 1, -1, -1, 1)
 
-    fun findWords(board: Array<CharArray>, words: Array<String>): List<String> {
+    override fun findWords(board: Array<CharArray>, words: Array<String>): List<String> {
         val res = ArrayList<String>()
         val root = buildTrie(words)
         for (i in board.indices) {

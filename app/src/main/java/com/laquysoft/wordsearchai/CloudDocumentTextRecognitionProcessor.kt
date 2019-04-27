@@ -1,9 +1,10 @@
 package com.laquysoft.wordsearchai
 
+import com.laquysoft.wordsearchai.algo.WordSearch
 import com.laquysoft.wordsearchai.algo.WordSearchLinear
 
 
-object CloudDocumentTextRecognitionProcessor {
+object CloudDocumentTextRecognitionProcessor : WordSearch by WordSearchLinear {
 
     fun process(
         text: String,
@@ -22,7 +23,7 @@ object CloudDocumentTextRecognitionProcessor {
             .map { it.replace("\\s".toRegex(), "").toCharArray() }
             .toTypedArray()
 
-        return WordSearchLinear.findWords(board, dictionary.filter { it.length > 2 }.toTypedArray())
+        return findWords(board, dictionary.filter { it.length > 2 }.toTypedArray())
     }
 
 }
