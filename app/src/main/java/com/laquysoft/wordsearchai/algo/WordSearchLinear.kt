@@ -11,19 +11,17 @@ object WordSearchLinear : WordSearch {
         val res = ArrayList<String>()
         val root = buildTrie(words)
         for (i in board.indices) {
-            for (j in 0 until board[0].size) {
-                for (d in 0 until directionX.size) {
-                    val visited = board.map { chars -> BooleanArray(chars.size) }.toTypedArray()
-                    dfs(board, visited, i, j, root, res, Pair(directionX[d], directionY[d]))
+            for (j in board[i].indices) {
+                for (d in directionX.indices) {
+                    dfs(board, i, j, root, res, Pair(directionX[d], directionY[d]))
                 }
             }
         }
         return res
     }
 
-    private fun dfs(
+    private tailrec fun dfs(
         board: Array<CharArray>,
-        visited: Array<BooleanArray>,
         i: Int,
         j: Int,
         p: TrieNode,
@@ -31,7 +29,7 @@ object WordSearchLinear : WordSearch {
         directions: Pair<Int, Int>
     ) {
 
-        if (i < 0 || j < 0 || i >= board.size || j >= board[i].size || visited[i][j]) return
+        if ( i !in 0 until board.size || j !in 0 until board[i].size) return
 
         var currentNode = p
         val c = board[i][j]
@@ -45,11 +43,9 @@ object WordSearchLinear : WordSearch {
             currentNode.word = null
         }
 
-        visited[i][j] = true
         val nextI = i + directions.first
         val nextJ = j + directions.second
-        dfs(board, visited, nextI, nextJ, currentNode, res, directions)
-        visited[i][j] = false
+        dfs(board, nextI, nextJ, currentNode, res, directions)
     }
 }
 
