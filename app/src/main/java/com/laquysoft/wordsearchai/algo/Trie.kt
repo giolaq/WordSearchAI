@@ -8,14 +8,14 @@ class TrieNode(
 
 fun buildTrie(words: Array<String>): TrieNode {
     val root = TrieNode()
-    for (w in words) {
+    words.forEach { word ->
         var p = root
-        for (c in w.toCharArray()) {
-            val i = c - 'a'
-            if (p.next[i] == null) p.next[i] = TrieNode()
+        word.toCharArray().forEach {
+            val i = it - 'a'
+            p.next[i] = p.next[i] ?: TrieNode()
             p = p.next[i]!!
         }
-        p.word = w
+        p.word = word
     }
     return root
 }
