@@ -141,8 +141,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun startChooseImageIntentForResult() {
         val intent = Intent().apply {
-            intent.type = "image/*"
-            intent.action = Intent.ACTION_GET_CONTENT
+            type = "image/*"
+            action = Intent.ACTION_GET_CONTENT
         }
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_CHOOSE_IMAGE)
     }
