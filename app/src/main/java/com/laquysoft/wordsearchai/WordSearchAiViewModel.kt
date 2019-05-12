@@ -28,7 +28,7 @@ class WordSearchAiViewModel(application: Application) : AndroidViewModel(applica
         detector.processImage(firebaseImage)
             .addOnSuccessListener {
                 if (it != null) {
-                    postWordsFounded(it)
+                    postWordsFound(it)
                     postBoundingBoxes(it)
                 }
             }
@@ -48,7 +48,7 @@ class WordSearchAiViewModel(application: Application) : AndroidViewModel(applica
         resultBoundingBoxes.postValue(result)
     }
 
-    private fun postWordsFounded(firebaseVisionDocumentText: FirebaseVisionDocumentText) {
+    private fun postWordsFound(firebaseVisionDocumentText: FirebaseVisionDocumentText) {
         if (firebaseVisionDocumentText.blocks.size == 0) {
             Toast.makeText(getApplication(), "No Text detected", Toast.LENGTH_LONG).show()
         }
