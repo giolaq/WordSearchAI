@@ -42,5 +42,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-ml-vision:24.0.3'
     implementation 'com.google.firebase:firebase-ml-model-interpreter:22.0.3'
     implementation 'org.tensorflow:tensorflow-lite:1.12.0'
+
+    implementation 'com.huawei.hms:ml-computer-vision-cloud:1.0.3.300'
 }
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.huawei.agconnect'
