@@ -9,7 +9,9 @@
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
-
+    <meta-data
+            android:name="com.huawei.hms.ml.DEPENDENCY"
+            android:value= "ocr"/>
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"

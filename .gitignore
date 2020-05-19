@@ -80,3 +80,4 @@ lint/tmp/
 # lint/reports/
 
 google-services.json
+agconnect-services.json

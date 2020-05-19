@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-import com.google.firebase.ml.vision.document.FirebaseVisionDocumentText
+import com.laquysoft.wordsearchai.textrecognizer.Symbol
 
 /**
  * Graphic instance for rendering TextBlock position, size, and ID within an associated graphic
@@ -12,7 +12,7 @@ import com.google.firebase.ml.vision.document.FirebaseVisionDocumentText
  */
 class CloudDocumentTextGraphic(
     overlay: GraphicOverlay,
-    private val symbol: FirebaseVisionDocumentText.Symbol?
+    private val symbol: Symbol
 ) : GraphicOverlay.Graphic(overlay) {
 
     private val rectPaint = Paint().apply {
@@ -28,20 +28,20 @@ class CloudDocumentTextGraphic(
 
     /** Draws the text block annotations for position, size, and raw value on the supplied canvas.  */
     override fun draw(canvas: Canvas) {
-        symbol?.let { syb ->
-            val rect = syb.boundingBox
-            rect?.let {
-                val scaledLeft = scaleX(it.left.toFloat()).toInt()
-                val scaledTop = scaleY(it.top.toFloat()).toInt()
-                val scaledRight = scaleX(it.right.toFloat()).toInt()
-                val scaledBottom = scaleY(it.bottom.toFloat()).toInt()
-                val scaledRect = Rect(scaledLeft, scaledTop, scaledRight, scaledBottom)
-                canvas.drawRect(scaledRect, rectPaint)
-                val x = scaleX(it.left.toFloat())
-                val y = scaleY(it.bottom.toFloat())
-                canvas.drawText(syb.text, x, y, textPaint)
-            }
-        } ?: throw IllegalStateException("Attempting to draw a null text.")
+
+        val rect = symbol.rect
+        rect?.let {
+            val scaledLeft = scaleX(it.left.toFloat()).toInt()
+            val scaledTop = scaleY(it.top.toFloat()).toInt()
+            val scaledRight = scaleX(it.right.toFloat()).toInt()
+            val scaledBottom = scaleY(it.bottom.toFloat()).toInt()
+            val scaledRect = Rect(scaledLeft, scaledTop, scaledRight, scaledBottom)
+            canvas.drawRect(scaledRect, rectPaint)
+            val x = scaleX(it.left.toFloat())
+            val y = scaleY(it.bottom.toFloat())
+            canvas.drawText(symbol.text.orEmpty(), x, y, textPaint)
+        }
+
     }
 
     companion object {
