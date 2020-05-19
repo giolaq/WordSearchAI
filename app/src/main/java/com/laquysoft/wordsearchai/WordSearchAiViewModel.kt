@@ -1,22 +1,18 @@
 package com.laquysoft.wordsearchai
 
-import android.app.Application
 import android.graphics.Bitmap
-import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.firebase.ml.vision.document.FirebaseVisionDocumentText
-import com.huawei.hmf.tasks.Task
-import com.huawei.hms.mlsdk.MLAnalyzerFactory
-import com.huawei.hms.mlsdk.common.MLFrame
-import com.huawei.hms.mlsdk.document.MLDocument
-import com.laquysoft.wordsearchai.overlay.Symbol
+import androidx.lifecycle.ViewModel
+import com.laquysoft.wordsearchai.textrecognizer.Document
+import com.laquysoft.wordsearchai.textrecognizer.DocumentTextRecognizer
+import com.laquysoft.wordsearchai.textrecognizer.Symbol
 
 
-class WordSearchAiViewModel(application: Application, val recognizer: DocumentTextRecognizer) :
-    AndroidViewModel(application) {
+class WordSearchAiViewModel(
+    private val resourceProvider: ResourceProvider,
+    private val recognizer: DocumentTextRecognizer
+) : ViewModel() {
 
     val resultList: MutableLiveData<List<String>> = MutableLiveData()
     val resultBoundingBoxes: MutableLiveData<List<Symbol>> = MutableLiveData()
@@ -25,16 +21,14 @@ class WordSearchAiViewModel(application: Application, val recognizer: DocumentTe
 
     fun detectDocumentTextIn(bitmap: Bitmap) {
 
-        val service =
-            DocumentTextRecognizerService.create(getApplication<Application>().applicationContext)
+        loadDictionary()
 
-        service.processImage(bitmap, {
+        recognizer.processImage(bitmap, {
             postWordsFound(it)
             postBoundingBoxes(it)
         },
             {
-                Toast.makeText(getApplication(), "Error detecting Text $it", Toast.LENGTH_LONG)
-                    .show()
+                Log.e("WordSearchAIViewModel", it)
             })
     }
 
@@ -44,9 +38,9 @@ class WordSearchAiViewModel(application: Application, val recognizer: DocumentTe
     }
 
     private fun postWordsFound(document: Document) {
-        if (document.count == 0) {
-            Toast.makeText(getApplication(), "No Text detected", Toast.LENGTH_LONG).show()
-        }
+//        if (document.count == 0) {
+//            Toast.makeText(getApplication(), "No Text detected", Toast.LENGTH_LONG).show()
+//        }
 
         val wordsFound = CloudDocumentTextRecognitionProcessor.process(
             document.stringValue,
@@ -56,15 +50,7 @@ class WordSearchAiViewModel(application: Application, val recognizer: DocumentTe
     }
 
     private fun loadDictionary() {
-        val resources = getApplication<Application>().resources
-        val dictionaryFileId = resources.getIdentifier(
-            "dictionary",
-            "raw", getApplication<Application>().packageName
-        )
-
-        val ins = resources.openRawResource(dictionaryFileId)
-
+        val ins = resourceProvider.getDictionaryStream()
         dictionary = ins.readBytes().toString(Charsets.UTF_8).lines()
-
     }
 }

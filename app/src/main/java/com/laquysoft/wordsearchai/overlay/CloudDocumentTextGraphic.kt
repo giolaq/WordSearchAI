@@ -4,9 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-
-
-data class Symbol(val text: String?, val rect: Rect?)
+import com.laquysoft.wordsearchai.textrecognizer.Symbol
 
 /**
  * Graphic instance for rendering TextBlock position, size, and ID within an associated graphic
