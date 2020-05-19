@@ -16,25 +16,27 @@ class GMSDocumentTextRecognizer : DocumentTextRecognizer {
         val firebaseImage = FirebaseVisionImage.fromBitmap(bitmap)
         detector.processImage(firebaseImage)
             .addOnSuccessListener { firebaseVisionDocumentText ->
-                val symbols = firebaseVisionDocumentText.blocks
-                    .flatMap { it -> it.paragraphs }
-                    .flatMap { it.words }
-                    .flatMap { it.symbols }
-                    .map {
-                        Symbol(
-                            it.text,
-                            it.boundingBox
+                if (firebaseVisionDocumentText != null) {
+                    val symbols = firebaseVisionDocumentText.blocks
+                        .flatMap { it -> it.paragraphs }
+                        .flatMap { it.words }
+                        .flatMap { it.symbols }
+                        .map {
+                            Symbol(
+                                it.text,
+                                it.boundingBox
+                            )
+                        }
+
+                    val document =
+                        Document(
+                            firebaseVisionDocumentText.text,
+                            firebaseVisionDocumentText.blocks.size,
+                            symbols
                         )
-                    }
 
-                val document =
-                    Document(
-                        firebaseVisionDocumentText.text,
-                        firebaseVisionDocumentText.blocks.size,
-                        symbols
-                    )
-
-                success(document)
+                    success(document)
+                }
             }
             .addOnFailureListener { error(it.localizedMessage) }
     }

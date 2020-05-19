@@ -16,25 +16,27 @@ class HMSDocumentTextRecognizer : DocumentTextRecognizer {
         val hmsFrame = MLFrame.fromBitmap(bitmap)
         detector.asyncAnalyseFrame(hmsFrame)
             .addOnSuccessListener { mlDocument ->
-                val symbols = mlDocument.blocks
-                    .flatMap { it.sections }
-                    .flatMap { it.wordList }
-                    .flatMap { it.characterList }
-                    .map {
-                        Symbol(
-                            it.stringValue,
-                            it.border
+                if ( mlDocument != null ) {
+                    val symbols = mlDocument.blocks
+                        .flatMap { it.sections }
+                        .flatMap { it.wordList }
+                        .flatMap { it.characterList }
+                        .map {
+                            Symbol(
+                                it.stringValue,
+                                it.border
+                            )
+                        }
+
+                    val document =
+                        Document(
+                            mlDocument.stringValue,
+                            mlDocument.blocks.size,
+                            symbols
                         )
-                    }
 
-                val document =
-                    Document(
-                        mlDocument.stringValue,
-                        mlDocument.blocks.size,
-                        symbols
-                    )
-
-                success(document)
+                    success(document)
+                }
             }
             .addOnFailureListener { error(it.localizedMessage) }
     }
