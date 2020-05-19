@@ -6,7 +6,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 
 
-data class Symbol(val text: String, val rect: Rect)
+data class Symbol(val text: String?, val rect: Rect?)
 
 /**
  * Graphic instance for rendering TextBlock position, size, and ID within an associated graphic
@@ -32,7 +32,7 @@ class CloudDocumentTextGraphic(
     override fun draw(canvas: Canvas) {
 
         val rect = symbol.rect
-        rect.let {
+        rect?.let {
             val scaledLeft = scaleX(it.left.toFloat()).toInt()
             val scaledTop = scaleY(it.top.toFloat()).toInt()
             val scaledRight = scaleX(it.right.toFloat()).toInt()
@@ -41,7 +41,7 @@ class CloudDocumentTextGraphic(
             canvas.drawRect(scaledRect, rectPaint)
             val x = scaleX(it.left.toFloat())
             val y = scaleY(it.bottom.toFloat())
-            canvas.drawText(symbol.text, x, y, textPaint)
+            canvas.drawText(symbol.text.orEmpty(), x, y, textPaint)
         }
 
     }

@@ -109,22 +109,10 @@ class MainActivity : AppCompatActivity() {
             if (words != null) adapter.submitList(words)
         })
 
-//        viewModel.resultBoundingBoxes.observe(this, Observer { boundingBoxes ->
-//            previewOverlay.clear()
-//            boundingBoxes.forEach {
-//                val cloudDocumentTextGraphic = CloudDocumentTextGraphic(
-//                    previewOverlay,
-//                    it
-//                )
-//                previewOverlay.add(cloudDocumentTextGraphic)
-//                previewOverlay.postInvalidate()
-//            }
-//        })
-
-        viewModel.resultBoundingBoxesHMS.observe(this, Observer { boundingBoxes ->
+        viewModel.resultBoundingBoxes.observe(this, Observer { boundingBoxes ->
             previewOverlay.clear()
             boundingBoxes.forEach {
-                val symbol = Symbol(it.stringValue, it.border)
+                val symbol = Symbol(it.text, it.rect)
                 val cloudDocumentTextGraphic = CloudDocumentTextGraphic(
                     previewOverlay,
                     symbol
