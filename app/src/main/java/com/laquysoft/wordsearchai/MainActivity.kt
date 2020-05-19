@@ -11,28 +11,32 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.PopupMenu
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.vision.CameraSource
 import com.laquysoft.wordsearchai.ImageLoader.Companion.SIZE_1024_768
 import com.laquysoft.wordsearchai.overlay.CloudDocumentTextGraphic
-import com.laquysoft.wordsearchai.overlay.CloudDocumentTextGraphicHMS
+import com.laquysoft.wordsearchai.textrecognizer.DocumentTextRecognizer
+import com.laquysoft.wordsearchai.textrecognizer.DocumentTextRecognizerService
+import com.laquysoft.wordsearchai.textrecognizer.Symbol
 import kotlinx.android.synthetic.main.activity_scrolling.*
 import kotlinx.android.synthetic.main.result_layout.*
 import java.io.IOException
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: WordSearchAiViewModel
+    private val viewModel by viewModels<WordSearchAiViewModel> { getViewModelFactory() }
 
     private var imageUri: Uri? = null
+
     // Max width (portrait mode)
     private var imageMaxWidth = 0
+
     // Max height (portrait mode)
     private var imageMaxHeight = 0
     private var selectedSize: String = SIZE_1024_768
@@ -75,10 +79,7 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "graphicOverlay is null")
         }
 
-
         isLandScape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-
-        viewModel = ViewModelProviders.of(this).get(WordSearchAiViewModel::class.java)
 
         savedInstanceState?.let {
             imageUri = it.getParcelable(KEY_IMAGE_URI)
@@ -110,24 +111,16 @@ class MainActivity : AppCompatActivity() {
             if (words != null) adapter.submitList(words)
         })
 
-//        viewModel.resultBoundingBoxes.observe(this, Observer { boundingBoxes ->
-//            previewOverlay.clear()
-//            boundingBoxes.forEach {
-//                val cloudDocumentTextGraphic = CloudDocumentTextGraphic(
-//                    previewOverlay,
-//                    it
-//                )
-//                previewOverlay.add(cloudDocumentTextGraphic)
-//                previewOverlay.postInvalidate()
-//            }
-//        })
-
-        viewModel.resultBoundingBoxesHMS.observe(this, Observer { boundingBoxes ->
+        viewModel.resultBoundingBoxes.observe(this, Observer { boundingBoxes ->
             previewOverlay.clear()
             boundingBoxes.forEach {
-                val cloudDocumentTextGraphic = CloudDocumentTextGraphicHMS(
+                val symbol = Symbol(
+                    it.text,
+                    it.rect
+                )
+                val cloudDocumentTextGraphic = CloudDocumentTextGraphic(
                     previewOverlay,
-                    it
+                    symbol
                 )
                 previewOverlay.add(cloudDocumentTextGraphic)
                 previewOverlay.postInvalidate()
@@ -179,12 +172,17 @@ class MainActivity : AppCompatActivity() {
                 // Clear the overlay first
                 previewOverlay?.clear()
 
-                val imageLoader = ImageLoader(contentResolver, it, selectedSize, isLandScape, previewPane)
+                val imageLoader =
+                    ImageLoader(contentResolver, it, selectedSize, isLandScape, previewPane)
 
                 val resizedBitmap = imageLoader.resizedBitmap
                 previewPane?.setImageBitmap(resizedBitmap)
 
-                previewOverlay.setCameraInfo(resizedBitmap.width, resizedBitmap.height, CameraSource.CAMERA_FACING_BACK)
+                previewOverlay.setCameraInfo(
+                    resizedBitmap.width,
+                    resizedBitmap.height,
+                    CameraSource.CAMERA_FACING_BACK
+                )
 
                 resizedBitmap.let { bitmap ->
                     viewModel.detectDocumentTextIn(bitmap)
@@ -228,7 +226,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun isPermissionGranted(context: Context, permission: String): Boolean {
-        if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                permission
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             Log.i(TAG, "Permission granted: $permission")
             return true
         }

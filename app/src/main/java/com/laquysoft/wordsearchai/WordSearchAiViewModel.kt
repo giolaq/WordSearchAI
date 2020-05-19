@@ -1,112 +1,56 @@
 package com.laquysoft.wordsearchai
 
-import android.app.Application
 import android.graphics.Bitmap
-import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.firebase.ml.vision.document.FirebaseVisionDocumentText
-import com.huawei.hmf.tasks.Task
-import com.huawei.hms.mlsdk.MLAnalyzerFactory
-import com.huawei.hms.mlsdk.common.MLFrame
-import com.huawei.hms.mlsdk.document.MLDocument
+import androidx.lifecycle.ViewModel
+import com.laquysoft.wordsearchai.textrecognizer.Document
+import com.laquysoft.wordsearchai.textrecognizer.DocumentTextRecognizer
+import com.laquysoft.wordsearchai.textrecognizer.Symbol
 
 
-class WordSearchAiViewModel(application: Application) : AndroidViewModel(application) {
+class WordSearchAiViewModel(
+    private val resourceProvider: ResourceProvider,
+    private val recognizer: DocumentTextRecognizer
+) : ViewModel() {
 
     val resultList: MutableLiveData<List<String>> = MutableLiveData()
-    val resultBoundingBoxes: MutableLiveData<List<FirebaseVisionDocumentText.Symbol>> = MutableLiveData()
-    val resultBoundingBoxesHMS: MutableLiveData<List<MLDocument.Character>> = MutableLiveData()
+    val resultBoundingBoxes: MutableLiveData<List<Symbol>> = MutableLiveData()
 
     private lateinit var dictionary: List<String>
 
     fun detectDocumentTextIn(bitmap: Bitmap) {
 
-        val detector = FirebaseVision.getInstance()
-            .cloudDocumentTextRecognizer
-
-        val firebaseImage = FirebaseVisionImage.fromBitmap(bitmap)
-
-        val analyzer = MLAnalyzerFactory.getInstance().remoteDocumentAnalyzer
-        val frame = MLFrame.fromBitmap(bitmap)
-
         loadDictionary()
 
-
-        val task: Task<MLDocument> = analyzer.asyncAnalyseFrame(frame)
-        task.addOnSuccessListener {
-            if (it != null) {
-                postWordsFoundHMS(it)
-                postBoundingBoxesHMS(it)
-            }
-        } .addOnFailureListener {
-            Toast.makeText(getApplication(), "Error detecting Text $it", Toast.LENGTH_LONG).show()
-        }
-
-        detector.processImage(firebaseImage)
-            .addOnSuccessListener {
-                if (it != null) {
-                    postWordsFound(it)
-                    postBoundingBoxes(it)
-                }
-            }
-            .addOnFailureListener {
-                Toast.makeText(getApplication(), "Error detecting Text $it", Toast.LENGTH_LONG).show()
-            }
-
-    }
-
-    private fun postBoundingBoxesHMS(mlDocument: MLDocument) {
-
-        val result = mlDocument.blocks
-            .flatMap { it.sections }
-            .flatMap { it.wordList }
-            .flatMap { it.characterList }
-
-        resultBoundingBoxesHMS.postValue(result)
-    }
-
-    private fun postWordsFoundHMS(mlDocument: MLDocument) {
-        if (mlDocument.blocks.size == 0) {
-            Toast.makeText(getApplication(), "No Text detected", Toast.LENGTH_LONG).show()
-        }
-
-        val wordsFound = CloudDocumentTextRecognitionProcessor.process(mlDocument.stringValue, dictionary)
-        resultList.postValue(wordsFound)
+        recognizer.processImage(bitmap, {
+            postWordsFound(it)
+            postBoundingBoxes(it)
+        },
+            {
+                Log.e("WordSearchAIViewModel", it)
+            })
     }
 
 
-    private fun postBoundingBoxes(text: FirebaseVisionDocumentText) {
-
-        val result = text.blocks
-            .flatMap { it.paragraphs }
-            .flatMap { it.words }
-            .flatMap { it.symbols }
-
-        resultBoundingBoxes.postValue(result)
+    private fun postBoundingBoxes(document: Document) {
+        resultBoundingBoxes.postValue(document.symbols)
     }
 
-    private fun postWordsFound(firebaseVisionDocumentText: FirebaseVisionDocumentText) {
-        if (firebaseVisionDocumentText.blocks.size == 0) {
-            Toast.makeText(getApplication(), "No Text detected", Toast.LENGTH_LONG).show()
-        }
+    private fun postWordsFound(document: Document) {
+//        if (document.count == 0) {
+//            Toast.makeText(getApplication(), "No Text detected", Toast.LENGTH_LONG).show()
+//        }
 
-        val wordsFound = CloudDocumentTextRecognitionProcessor.process(firebaseVisionDocumentText.text, dictionary)
+        val wordsFound = CloudDocumentTextRecognitionProcessor.process(
+            document.stringValue,
+            dictionary
+        )
         resultList.postValue(wordsFound)
     }
 
     private fun loadDictionary() {
-        val resources = getApplication<Application>().resources
-        val dictionaryFileId = resources.getIdentifier(
-            "dictionary",
-            "raw", getApplication<Application>().packageName
-        )
-
-        val ins = resources.openRawResource(dictionaryFileId)
-
+        val ins = resourceProvider.getDictionaryStream()
         dictionary = ins.readBytes().toString(Charsets.UTF_8).lines()
-
     }
 }
