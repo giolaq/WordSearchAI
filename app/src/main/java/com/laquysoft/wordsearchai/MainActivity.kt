@@ -20,11 +20,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.vision.CameraSource
 import com.laquysoft.wordsearchai.ImageLoader.Companion.SIZE_1024_768
 import com.laquysoft.wordsearchai.overlay.CloudDocumentTextGraphic
-import com.laquysoft.wordsearchai.overlay.CloudDocumentTextGraphicHMS
+import com.laquysoft.wordsearchai.overlay.Symbol
 import kotlinx.android.synthetic.main.activity_scrolling.*
 import kotlinx.android.synthetic.main.result_layout.*
 import java.io.IOException
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -125,9 +124,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.resultBoundingBoxesHMS.observe(this, Observer { boundingBoxes ->
             previewOverlay.clear()
             boundingBoxes.forEach {
-                val cloudDocumentTextGraphic = CloudDocumentTextGraphicHMS(
+                val symbol = Symbol(it.stringValue, it.border)
+                val cloudDocumentTextGraphic = CloudDocumentTextGraphic(
                     previewOverlay,
-                    it
+                    symbol
                 )
                 previewOverlay.add(cloudDocumentTextGraphic)
                 previewOverlay.postInvalidate()
