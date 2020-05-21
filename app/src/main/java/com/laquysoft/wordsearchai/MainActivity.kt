@@ -1,9 +1,7 @@
 package com.laquysoft.wordsearchai
 
-import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
@@ -11,6 +9,8 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.PopupMenu
+import androidx.activity.invoke
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -54,11 +54,11 @@ class MainActivity : AppCompatActivity() {
             popup.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.select_images_from_local -> {
-                        startChooseImageIntentForResult()
+                        pickImages()
                         true
                     }
                     R.id.take_photo_using_camera -> {
-                        startCameraIntentForResult()
+                        takePicture()
                         true
                     }
                     else -> false
@@ -84,9 +84,7 @@ class MainActivity : AppCompatActivity() {
             imageMaxHeight = it.getInt(KEY_IMAGE_MAX_HEIGHT)
             selectedSize = it.getString(KEY_SELECTED_SIZE, SIZE_1024_768)
 
-            imageUri?.let {
-                tryReloadAndDetectInImage()
-            }
+            tryReloadAndDetectInImage()
         }
 
         val adapter = WordListAdapter()
@@ -125,42 +123,25 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun startCameraIntentForResult() {
-        // Clean up last time's image
-        imageUri = null
-        previewPane?.setImageBitmap(null)
-
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        takePictureIntent.resolveActivity(packageManager)?.let {
-            val values = ContentValues().apply {
-                put(MediaStore.Images.Media.TITLE, "New Picture")
-                put(MediaStore.Images.Media.DESCRIPTION, "From Camera")
-            }
-            imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+    private fun takePicture() {
+        val values = ContentValues().apply {
+            put(MediaStore.Images.Media.TITLE, "New Picture")
+            put(MediaStore.Images.Media.DESCRIPTION, "From Camera")
         }
-    }
-
-    private fun startChooseImageIntentForResult() {
-        val intent = Intent().apply {
-            type = "image/*"
-            action = Intent.ACTION_GET_CONTENT
-        }
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_CHOOSE_IMAGE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+        imageUri = contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            values
+        )
+        registerForActivityResult(ActivityResultContracts.TakePicture()) {
             tryReloadAndDetectInImage()
-        } else if (requestCode == REQUEST_CHOOSE_IMAGE && resultCode == Activity.RESULT_OK) {
-            // In this case, imageUri is returned by the chooser, save it.
-            data?.let {
-                imageUri = it.data
-                tryReloadAndDetectInImage()
-            }
-        }
+        }(imageUri)
+    }
+
+    private fun pickImages() {
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            imageUri = uri
+            tryReloadAndDetectInImage()
+        }("image/*")
     }
 
     private fun tryReloadAndDetectInImage() {
@@ -246,7 +227,5 @@ class MainActivity : AppCompatActivity() {
 
         private const val PERMISSION_REQUESTS = 1
 
-        private const val REQUEST_IMAGE_CAPTURE = 1001
-        private const val REQUEST_CHOOSE_IMAGE = 1002
     }
 }
