@@ -16,13 +16,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.vision.CameraSource
 import com.laquysoft.wordsearchai.ImageLoader.Companion.SIZE_1024_768
 import com.laquysoft.wordsearchai.overlay.CloudDocumentTextGraphic
-import com.laquysoft.wordsearchai.textrecognizer.DocumentTextRecognizer
-import com.laquysoft.wordsearchai.textrecognizer.DocumentTextRecognizerService
 import com.laquysoft.wordsearchai.textrecognizer.Symbol
 import kotlinx.android.synthetic.main.activity_scrolling.*
 import kotlinx.android.synthetic.main.result_layout.*

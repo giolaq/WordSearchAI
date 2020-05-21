@@ -29,7 +29,7 @@ object WordSearchLinear : WordSearch {
         directions: Pair<Int, Int>
     ) {
 
-        if ( i !in 0 until board.size || j !in 0 until board[i].size) return
+        if ( i !in board.indices || j !in board[i].indices) return
 
         var currentNode = p
         val c = board[i][j]
