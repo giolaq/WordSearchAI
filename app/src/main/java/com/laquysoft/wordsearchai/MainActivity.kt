@@ -9,11 +9,11 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.activity.invoke
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -197,9 +197,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (allNeededPermissions.isNotEmpty()) {
-            ActivityCompat.requestPermissions(
-                this, allNeededPermissions.toTypedArray(), PERMISSION_REQUESTS
-            )
+            askMultiplePermissions(allNeededPermissions.toTypedArray())
         }
     }
 
@@ -216,6 +214,9 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
+    private val askMultiplePermissions =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}
+
     companion object {
 
         private const val TAG = "MainActivity"
@@ -224,8 +225,5 @@ class MainActivity : AppCompatActivity() {
         private const val KEY_IMAGE_MAX_WIDTH = "com.laquysoft.wordsearchai.KEY_IMAGE_MAX_WIDTH"
         private const val KEY_IMAGE_MAX_HEIGHT = "com.laquysoft.wordsearchai.KEY_IMAGE_MAX_HEIGHT"
         private const val KEY_SELECTED_SIZE = " com.laquysoft.wordsearchai.KEY_SELECTED_SIZE"
-
-        private const val PERMISSION_REQUESTS = 1
-
     }
 }
