@@ -6,7 +6,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 
 class GMSDocumentTextRecognizer : DocumentTextRecognizer {
 
-    private val detector = FirebaseVision.getInstance().cloudDocumentTextRecognizer
+    private val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
 
     override fun processImage(
         bitmap: Bitmap,
@@ -17,21 +17,27 @@ class GMSDocumentTextRecognizer : DocumentTextRecognizer {
         detector.processImage(firebaseImage)
             .addOnSuccessListener { firebaseVisionDocumentText ->
                 if (firebaseVisionDocumentText != null) {
-                    val symbols = firebaseVisionDocumentText.blocks
-                        .flatMap { it -> it.paragraphs }
-                        .flatMap { it.words }
-                        .flatMap { it.symbols }
-                        .map {
-                            Symbol(
-                                it.text,
-                                it.boundingBox
-                            )
+                    val words = firebaseVisionDocumentText.textBlocks
+                        .flatMap { it -> it.lines }
+                        .flatMap { it.elements }
+
+                    val symbols: MutableList<Symbol> = emptyList<Symbol>().toMutableList()
+
+                    words.forEach {
+                        val rect = it.boundingBox
+                        it.text.forEach {
+                            symbols.add(Symbol(
+                                it.toString(),
+                                rect
+                            ))
                         }
+                    }
+
 
                     val document =
                         Document(
                             firebaseVisionDocumentText.text,
-                            firebaseVisionDocumentText.blocks.size,
+                            firebaseVisionDocumentText.textBlocks.size,
                             symbols
                         )
 
