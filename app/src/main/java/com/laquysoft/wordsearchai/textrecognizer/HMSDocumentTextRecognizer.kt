@@ -3,7 +3,6 @@ package com.laquysoft.wordsearchai.textrecognizer
 import android.graphics.Bitmap
 import com.huawei.hms.mlsdk.MLAnalyzerFactory
 import com.huawei.hms.mlsdk.common.MLFrame
-import com.huawei.hms.mlsdk.document.MLDocumentSetting
 
 class HMSDocumentTextRecognizer : DocumentTextRecognizer {
 
@@ -27,10 +26,12 @@ class HMSDocumentTextRecognizer : DocumentTextRecognizer {
 
                     words.forEach {
                         val rect = it.border
-                        it.stringValue.forEach {
+                        it.stringValue.forEachIndexed { idx, value ->
                             symbols.add(Symbol(
-                                it.toString(),
-                                rect
+                                value.toString(),
+                                rect,
+                                idx,
+                                it.stringValue.length
                             ))
                         }
                     }

@@ -11,7 +11,12 @@ enum class ServiceType {
     GOOGLE
 }
 
-data class Symbol(val text: String?, val rect: Rect?)
+data class Symbol(
+    val text: String?,
+    val rect: Rect?,
+    val idx: Int = 0,
+    val length: Int = 0
+)
 
 data class Document(val stringValue: String, val count: Int, val symbols: List<Symbol>)
 

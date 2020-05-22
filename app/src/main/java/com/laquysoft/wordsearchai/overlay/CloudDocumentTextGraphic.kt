@@ -3,7 +3,7 @@ package com.laquysoft.wordsearchai.overlay
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.RectF
 import com.laquysoft.wordsearchai.textrecognizer.Symbol
 
 /**
@@ -27,26 +27,25 @@ class CloudDocumentTextGraphic(
     }
 
     /** Draws the text block annotations for position, size, and raw value on the supplied canvas.  */
-    override fun draw(canvas: Canvas) {
-
-        val rect = symbol.rect
-        rect?.let {
-            val scaledLeft = scaleX(it.left.toFloat()).toInt()
-            val scaledTop = scaleY(it.top.toFloat()).toInt()
-            val scaledRight = scaleX(it.right.toFloat()).toInt()
-            val scaledBottom = scaleY(it.bottom.toFloat()).toInt()
-            val scaledRect = Rect(scaledLeft, scaledTop, scaledRight, scaledBottom)
-            canvas.drawRect(scaledRect, rectPaint)
-            val x = scaleX(it.left.toFloat())
-            val y = scaleY(it.bottom.toFloat())
-            canvas.drawText(symbol.text.orEmpty(), x, y, textPaint)
+    override fun draw(canvas: Canvas?) {
+        symbol.let { txt ->
+            // Draws the bounding box around the TextBlock.
+            val rect = RectF(txt.rect)
+            rect.left = translateX(rect.left)
+            rect.top = translateY(rect.top)
+            rect.right = translateX(rect.right)
+            rect.bottom = translateY(rect.bottom)
+            canvas?.drawRect(rect, rectPaint)
+            val offset = (rect.right-rect.left) / txt.length
+            canvas?.drawText(txt.text, rect.left + (symbol.idx*offset), rect.bottom, textPaint)
         }
-
     }
 
     companion object {
+
         private const val TEXT_COLOR = Color.RED
         private const val TEXT_SIZE = 54.0f
         private const val STROKE_WIDTH = 4.0f
     }
+
 }

@@ -38,10 +38,6 @@ class WordSearchAiViewModel(
     }
 
     private fun postWordsFound(document: Document) {
-//        if (document.count == 0) {
-//            Toast.makeText(getApplication(), "No Text detected", Toast.LENGTH_LONG).show()
-//        }
-
         val wordsFound = CloudDocumentTextRecognitionProcessor.process(
             document.stringValue,
             dictionary

@@ -25,10 +25,12 @@ class GMSDocumentTextRecognizer : DocumentTextRecognizer {
 
                     words.forEach {
                         val rect = it.boundingBox
-                        it.text.forEach {
+                        it.text.forEachIndexed { idx, value ->
                             symbols.add(Symbol(
-                                it.toString(),
-                                rect
+                                value.toString(),
+                                rect,
+                                idx,
+                                it.text.length
                             ))
                         }
                     }

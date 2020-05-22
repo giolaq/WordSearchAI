@@ -6,7 +6,7 @@ import com.laquysoft.wordsearchai.algo.WordSearchLinear
 
 object CloudDocumentTextRecognitionProcessor : WordSearch by WordSearchLinear {
 
-    fun process(
+    fun  process(
         text: String,
         dictionary: List<String>
     ): List<String> {

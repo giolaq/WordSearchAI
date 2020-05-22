@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.activity.invoke
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -27,6 +26,7 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var imageSize: Pair<Int, Int>
     private val viewModel by viewModels<WordSearchAiViewModel> { getViewModelFactory() }
 
     private var imageUri: Uri? = null
@@ -108,15 +108,10 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.resultBoundingBoxes.observe(this, Observer { boundingBoxes ->
             previewOverlay.clear()
-            boundingBoxes.forEach {
-                val symbol = Symbol(
-                    it.text,
-                    it.rect
-                )
+            boundingBoxes.forEach{ symbol ->
                 val cloudDocumentTextGraphic = CloudDocumentTextGraphic(
                     previewOverlay,
-                    symbol
-                )
+                    symbol)
                 previewOverlay.add(cloudDocumentTextGraphic)
                 previewOverlay.postInvalidate()
             }
@@ -154,6 +149,7 @@ class MainActivity : AppCompatActivity() {
                     ImageLoader(contentResolver, it, selectedSize, isLandScape, previewPane)
 
                 val resizedBitmap = imageLoader.resizedBitmap
+                imageSize = Pair(resizedBitmap.width, resizedBitmap.height)
                 previewPane?.setImageBitmap(resizedBitmap)
 
                 previewOverlay.setCameraInfo(
