@@ -1,4 +1,4 @@
-package com.laquysoft.wordsearchai
+package com.laquysoft.wordsearchai.ui
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,14 +6,23 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.laquysoft.wordsearchai.R
 import kotlinx.android.synthetic.main.word_row.view.*
 
-class WordListAdapter : ListAdapter<String, WordListAdapter.ViewHolder>(WordDiffCallback()) {
+class WordListAdapter : ListAdapter<String, WordListAdapter.ViewHolder>(
+    WordDiffCallback()
+) {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return ViewHolder(inflater.inflate(R.layout.word_row, parent, false))
+        return ViewHolder(
+            inflater.inflate(
+                R.layout.word_row,
+                parent,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

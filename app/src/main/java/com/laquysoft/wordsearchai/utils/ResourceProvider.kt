@@ -1,4 +1,4 @@
-package com.laquysoft.wordsearchai
+package com.laquysoft.wordsearchai.utils
 
 import android.content.Context
 import android.content.res.Resources

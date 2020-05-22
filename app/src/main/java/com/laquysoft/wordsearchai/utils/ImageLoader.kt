@@ -1,4 +1,4 @@
-package com.laquysoft.wordsearchai
+package com.laquysoft.wordsearchai.utils
 
 import android.content.ContentResolver
 import android.graphics.Bitmap

@@ -1,7 +1,8 @@
-package com.laquysoft.wordsearchai
+package com.laquysoft.wordsearchai.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.laquysoft.wordsearchai.utils.ResourceProvider
 import com.laquysoft.wordsearchai.textrecognizer.DocumentTextRecognizer
 
 class ViewModelFactory constructor(

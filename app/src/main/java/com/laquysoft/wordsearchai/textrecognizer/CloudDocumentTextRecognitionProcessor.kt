@@ -1,4 +1,4 @@
-package com.laquysoft.wordsearchai
+package com.laquysoft.wordsearchai.textrecognizer
 
 import com.laquysoft.wordsearchai.algo.WordSearch
 import com.laquysoft.wordsearchai.algo.WordSearchLinear

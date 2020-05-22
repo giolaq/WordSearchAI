@@ -1,9 +1,11 @@
-package com.laquysoft.wordsearchai
+package com.laquysoft.wordsearchai.ui
 
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.laquysoft.wordsearchai.textrecognizer.CloudDocumentTextRecognitionProcessor
+import com.laquysoft.wordsearchai.utils.ResourceProvider
 import com.laquysoft.wordsearchai.textrecognizer.Document
 import com.laquysoft.wordsearchai.textrecognizer.DocumentTextRecognizer
 import com.laquysoft.wordsearchai.textrecognizer.Symbol
@@ -38,10 +40,11 @@ class WordSearchAiViewModel(
     }
 
     private fun postWordsFound(document: Document) {
-        val wordsFound = CloudDocumentTextRecognitionProcessor.process(
-            document.stringValue,
-            dictionary
-        )
+        val wordsFound =
+            CloudDocumentTextRecognitionProcessor.process(
+                document.stringValue,
+                dictionary
+            )
         resultList.postValue(wordsFound)
     }
 

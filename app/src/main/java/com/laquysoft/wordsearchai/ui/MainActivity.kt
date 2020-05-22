@@ -1,4 +1,4 @@
-package com.laquysoft.wordsearchai
+package com.laquysoft.wordsearchai.ui
 
 import android.content.ContentValues
 import android.content.Context
@@ -17,9 +17,10 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.vision.CameraSource
-import com.laquysoft.wordsearchai.ImageLoader.Companion.SIZE_1024_768
+import com.laquysoft.wordsearchai.R
+import com.laquysoft.wordsearchai.utils.ImageLoader.Companion.SIZE_1024_768
 import com.laquysoft.wordsearchai.overlay.CloudDocumentTextGraphic
-import com.laquysoft.wordsearchai.textrecognizer.Symbol
+import com.laquysoft.wordsearchai.utils.ImageLoader
 import kotlinx.android.synthetic.main.activity_scrolling.*
 import kotlinx.android.synthetic.main.result_layout.*
 import java.io.IOException
@@ -146,7 +147,13 @@ class MainActivity : AppCompatActivity() {
                 previewOverlay?.clear()
 
                 val imageLoader =
-                    ImageLoader(contentResolver, it, selectedSize, isLandScape, previewPane)
+                    ImageLoader(
+                        contentResolver,
+                        it,
+                        selectedSize,
+                        isLandScape,
+                        previewPane
+                    )
 
                 val resizedBitmap = imageLoader.resizedBitmap
                 imageSize = Pair(resizedBitmap.width, resizedBitmap.height)
