@@ -13,7 +13,7 @@ object WordSearchLinear : WordSearch {
         for (i in board.indices) {
             for (j in board[i].indices) {
                 for (d in directionX.indices) {
-                    dfs(board, i, j, root, res, Pair(directionX[d], directionY[d]))
+                    dfs(board, Pair(i, j), root, res, Pair(directionX[d], directionY[d]))
                 }
             }
         }
@@ -22,13 +22,13 @@ object WordSearchLinear : WordSearch {
 
     private tailrec fun dfs(
         board: Array<CharArray>,
-        i: Int,
-        j: Int,
+        coordinates: Pair<Int, Int>,
         p: TrieNode,
         res: MutableList<String>,
         directions: Pair<Int, Int>
     ) {
 
+        val (i, j) = coordinates
         if ( i !in board.indices || j !in board[i].indices) return
 
         var currentNode = p
@@ -45,7 +45,7 @@ object WordSearchLinear : WordSearch {
 
         val nextI = i + directions.first
         val nextJ = j + directions.second
-        dfs(board, nextI, nextJ, currentNode, res, directions)
+        dfs(board, Pair(nextI, nextJ), currentNode, res, directions)
     }
 }
 

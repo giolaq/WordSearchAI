@@ -13,7 +13,7 @@ enum class ServiceType {
 
 data class Symbol(
     val text: String?,
-    val rect: Rect?,
+    val rect: Rect,
     val idx: Int = 0,
     val length: Int = 0
 )

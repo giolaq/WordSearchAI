@@ -189,7 +189,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 emptyArray()
             }
-        } catch (e: Exception) {
+        } catch (e: PackageManager.NameNotFoundException) {
             emptyArray()
         }
     }

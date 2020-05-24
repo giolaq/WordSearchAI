@@ -3,13 +3,8 @@ package com.laquysoft.wordsearchai.overlay
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.RectF
 import com.laquysoft.wordsearchai.textrecognizer.Symbol
 
-/**
- * Graphic instance for rendering TextBlock position, size, and ID within an associated graphic
- * overlay view.
- */
 class CloudDocumentTextGraphic(
     overlay: GraphicOverlay,
     private val symbol: Symbol
@@ -26,18 +21,13 @@ class CloudDocumentTextGraphic(
         textSize = TEXT_SIZE
     }
 
-    /** Draws the text block annotations for position, size, and raw value on the supplied canvas.  */
     override fun draw(canvas: Canvas?) {
         symbol.let { txt ->
             // Draws the bounding box around the TextBlock.
-            val rect = RectF(txt.rect)
-            rect.left = translateX(rect.left)
-            rect.top = translateY(rect.top)
-            rect.right = translateX(rect.right)
-            rect.bottom = translateY(rect.bottom)
+            val rect = translateRect(txt.rect)
             canvas?.drawRect(rect, rectPaint)
             val offset = (rect.right-rect.left) / txt.length
-            canvas?.drawText(txt.text, rect.left + (symbol.idx*offset), rect.bottom, textPaint)
+            canvas?.drawText(txt.text.orEmpty(), rect.left + (symbol.idx*offset), rect.bottom, textPaint)
         }
     }
 
