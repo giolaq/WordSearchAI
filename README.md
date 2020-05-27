@@ -7,7 +7,7 @@ This project is a sample using
 
 and 
 
-[Huawei HMS ML Kit] (https://developer.huawei.com/consumer/en/doc/development/HMS-Guides/ml-introduction-4)
+[Huawei HMS ML Kit](https://developer.huawei.com/consumer/en/doc/development/HMS-Guides/ml-introduction-4)
 
 It will try to solve a picture of a word search game taken by camera or from file system given a textfile vocabulary
 
