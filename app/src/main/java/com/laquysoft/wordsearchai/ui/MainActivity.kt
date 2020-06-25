@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.PopupMenu
-import androidx.activity.invoke
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -130,14 +129,14 @@ class MainActivity : AppCompatActivity() {
         )
         registerForActivityResult(ActivityResultContracts.TakePicture()) {
             tryReloadAndDetectInImage()
-        }(imageUri)
+        }.launch(imageUri)
     }
 
     private fun pickImages() {
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             imageUri = uri
             tryReloadAndDetectInImage()
-        }("image/*")
+        }.launch("image/*")
     }
 
     private fun tryReloadAndDetectInImage() {
@@ -200,7 +199,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (allNeededPermissions.isNotEmpty()) {
-            askMultiplePermissions(allNeededPermissions.toTypedArray())
+            askMultiplePermissions.launch(allNeededPermissions.toTypedArray())
         }
     }
 
