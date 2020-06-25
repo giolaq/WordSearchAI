@@ -4,5 +4,5 @@ import android.graphics.Bitmap
 
 interface DocumentTextRecognizer {
 
-    fun processImage(bitmap: Bitmap, success: (Document) -> Unit, error: (String?) -> Unit)
+    suspend fun processImage(bitmap: Bitmap, success: (Document) -> Unit, error: (String?) -> Unit)
 }

@@ -4,11 +4,13 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.laquysoft.wordsearchai.textrecognizer.CloudDocumentTextRecognitionProcessor
 import com.laquysoft.wordsearchai.utils.ResourceProvider
 import com.laquysoft.wordsearchai.textrecognizer.Document
 import com.laquysoft.wordsearchai.textrecognizer.DocumentTextRecognizer
 import com.laquysoft.wordsearchai.textrecognizer.Symbol
+import kotlinx.coroutines.launch
 
 
 class WordSearchAiViewModel(
@@ -25,13 +27,12 @@ class WordSearchAiViewModel(
 
         loadDictionary()
 
-        recognizer.processImage(bitmap, {
-            postWordsFound(it)
-            postBoundingBoxes(it)
-        },
-            {
-                Log.e("WordSearchAIViewModel", it)
-            })
+        viewModelScope.launch {
+            recognizer.processImage(bitmap, {
+                postWordsFound(it)
+                postBoundingBoxes(it)
+            }, { Log.e("WordSearchAIViewModel", it) })
+        }
     }
 
 
